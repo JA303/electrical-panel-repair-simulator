@@ -5,6 +5,7 @@ namespace Project.Scripts.Player
     public class PlayerMovement : MonoBehaviour
     {
         [SerializeField] private PlayerInput playerInput;
+        [SerializeField] private PlayerControlGate controlGate;
         [SerializeField] private Transform mainCameraTransform;
         [SerializeField] private CharacterController characterController;
         
@@ -22,6 +23,9 @@ namespace Project.Scripts.Player
 
         private void Update()
         {
+            if (controlGate.IsLocked)
+             return;
+            
             currentMoveSpeed = playerInput.RunBool ?  runningSpeed : walkSpeed;
             HandleMovement(playerInput.MoveVector);
             HandleLooking(playerInput.LookVector);

@@ -94,9 +94,9 @@ public class Outline : MonoBehaviour {
 
     // Retrieve or generate smooth normals
     LoadSmoothNormals();
-
+    
     // Apply material properties immediately
-    needsUpdate = true;
+    UpdateMaterialProperties();
   }
 
   void OnEnable() {

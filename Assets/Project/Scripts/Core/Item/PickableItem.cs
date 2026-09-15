@@ -11,6 +11,7 @@ namespace Project.Scripts.Core.Item
         private Transform originalParent;
 
         public ItemDefinition ItemDefinition => itemDefinition;
+        public bool HasPickup { get; private set; }
 
         private void Awake()
         {
@@ -21,6 +22,8 @@ namespace Project.Scripts.Core.Item
         {
             if (holdPoint == null)
                 return;
+
+            HasPickup = true;
 
             body.isKinematic = true;
             body.linearVelocity = Vector3.zero;
@@ -36,14 +39,15 @@ namespace Project.Scripts.Core.Item
 
         public void DetachFromHand()
         {
+            HasPickup = false;
+            
             transform.SetParent(originalParent);
 
             foreach (Collider collider in colliders)
                 collider.enabled = true;
 
             body.isKinematic = false;
-
-            transform.position += transform.forward * 0.4f;
+            body.AddForce(transform.forward * 10);
         }
 
         public void Consume()

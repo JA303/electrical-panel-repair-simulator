@@ -12,6 +12,10 @@ namespace Project.Scripts.Player
         private InputAction moveInput;
         private InputAction runInput;
         private InputAction lookInput;
+        
+        public InputAction InteractInput {get; private set;}
+        public InputAction UseInput {get; private set;}
+        public InputAction DropInput {get; private set;}
 
         private void Start()
         {
@@ -25,6 +29,10 @@ namespace Project.Scripts.Player
             moveInput = InputSystem.actions.FindAction("Move");
             runInput = InputSystem.actions.FindAction("Sprint");
             lookInput = InputSystem.actions.FindAction("Look");
+            
+            InteractInput = InputSystem.actions.FindAction("Interact");
+            UseInput = InputSystem.actions.FindAction("Use");
+            DropInput = InputSystem.actions.FindAction("Drop");
         }
 
         private void Update()
