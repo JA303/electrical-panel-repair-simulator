@@ -1,4 +1,5 @@
-﻿using Project.Scripts.Core.Item;
+﻿using System.Text.Json;
+using Project.Scripts.Core.Item;
 using UnityEngine;
 
 namespace Project.Scripts.Core.Mission
@@ -11,10 +12,10 @@ namespace Project.Scripts.Core.Mission
 
         [Header("Execution")] [SerializeField] private TaskType type;
         [SerializeField] private RequiredHand requiredHand;
+        [SerializeField] private bool lockPlayer = true;
 
-        [Header("Requirements")] [SerializeField]
-        private ItemDefinition requiredItem;
-
+        [Header("Requirements")] 
+        [SerializeField] private ItemDefinition requiredItem;
         [SerializeField] private TaskDefinition[] prerequisites;
 
         [Header("UI")] [SerializeField] private bool showInTaskList = true;
@@ -23,6 +24,7 @@ namespace Project.Scripts.Core.Mission
         public string Title => title;
         public TaskType Type => type;
         public RequiredHand RequiredHand => requiredHand;
+        public bool LockPlayer => lockPlayer;
         public ItemDefinition RequiredItem => requiredItem;
         public TaskDefinition[] Prerequisites => prerequisites;
         public bool ShowInTaskList => showInTaskList;
@@ -31,7 +33,7 @@ namespace Project.Scripts.Core.Mission
         private void OnValidate()
         {
             if (string.IsNullOrWhiteSpace(id))
-                id = name;
+                id = JsonNamingPolicy.SnakeCaseLower.ConvertName(title);;
         }
 #endif
     }

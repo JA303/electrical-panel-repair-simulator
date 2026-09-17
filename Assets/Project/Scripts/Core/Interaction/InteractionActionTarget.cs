@@ -56,20 +56,13 @@ namespace Project.Scripts.Core.Interaction
             InteractionAction action,
             PlayerHands hands)
         {
-            switch (action.task.RequiredHand)
+            return action.task.RequiredHand switch
             {
-                case RequiredHand.Any:
-                    return true;
-
-                case RequiredHand.Empty:
-                    return hands.IsEmpty;
-
-                case RequiredHand.SpecificItem:
-                    return hands.HasItem(action.requiredItem);
-
-                default:
-                    return false;
-            }
+                RequiredHand.Any => true,
+                RequiredHand.Empty => hands.IsEmpty,
+                RequiredHand.SpecificItem => hands.HasItem(action.requiredItem),
+                _ => false
+            };
         }
     }
 }

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cade952430474a6494dbff119ea671c3, type: 3}
+  m_Name: WireLeftTightenRight
+  m_EditorClassIdentifier: NewAssembly::Project.Scripts.Core.Mission.TaskDefinition
+  id: wire_left_tighten_right
+  title: Wire Left Tighten Right
+  type: 0
+  requiredHand: 2
+  lockPlayer: 1
+  requiredItem: {fileID: 11400000, guid: 6720e53e356fd9a4585061d8d2fdec52, type: 2}
+  prerequisites:
+  - {fileID: 11400000, guid: 0e9123f0d15602d48bcf423c3beb6dd6, type: 2}
+  showInTaskList: 1

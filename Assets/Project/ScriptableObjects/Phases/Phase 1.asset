@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 463276c98b484e3c8b97f7dfc6076828, type: 3}
+  m_Name: Phase 1
+  m_EditorClassIdentifier: NewAssembly::Project.Scripts.Core.Mission.PhaseDefinition
+  id: phase_1
+  title: Phase 1
+  tasks:
+  - {fileID: 11400000, guid: 3efcbfff3ae3d5640bfde49327225ef2, type: 2}
+  - {fileID: 11400000, guid: 31c10fbae858bec498382cf145e26bf0, type: 2}
+  - {fileID: 11400000, guid: f33d0c917217d1742be9defec65d70f1, type: 2}

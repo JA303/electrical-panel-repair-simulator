@@ -5,8 +5,10 @@ namespace Project.Scripts.Core.Mission
     public static class MissionEvents
     {
         public static event Action<TaskDefinition, TaskStatus> TaskStatusChanged;
+        public static event Action<TaskDefinition> AutomaticTaskAvailable;
         public static event Action<PhaseDefinition> PhaseChanged;
         public static event Action MissionCompleted;
+
 
         public static void RaiseTaskStatusChanged(
             TaskDefinition task,
@@ -23,6 +25,12 @@ namespace Project.Scripts.Core.Mission
         public static void RaiseMissionCompleted()
         {
             MissionCompleted?.Invoke();
+        }
+        
+
+        public static void RaiseAutomaticTaskAvailable(TaskDefinition task)
+        {
+            AutomaticTaskAvailable?.Invoke(task);
         }
 
         public static void Clear()

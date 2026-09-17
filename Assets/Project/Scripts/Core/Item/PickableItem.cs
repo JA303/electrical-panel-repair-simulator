@@ -20,7 +20,7 @@ namespace Project.Scripts.Core.Item
 
         public void AttachToHand(Transform holdPoint)
         {
-            if (holdPoint == null)
+            if (!holdPoint)
                 return;
 
             HasPickup = true;
@@ -49,6 +49,10 @@ namespace Project.Scripts.Core.Item
             body.isKinematic = false;
             body.AddForce(transform.forward * 10);
         }
+
+        public virtual void BeginUse() {}
+        
+        public virtual void EndUse() {}
 
         public void Consume()
         {

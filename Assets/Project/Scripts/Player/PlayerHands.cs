@@ -1,11 +1,11 @@
 ﻿using Project.Scripts.Core.Item;
-using Project.Scripts.Core.Mission;
 using UnityEngine;
 
 namespace Project.Scripts.Player
 {
     public class PlayerHands : MonoBehaviour
     {
+        [SerializeField] private PlayerControlGate controlGate;
         [SerializeField] private Transform holdPoint;
 
         private PickableItem heldItem;
@@ -14,6 +14,11 @@ namespace Project.Scripts.Player
         public PickableItem HeldItem => heldItem;
         public ItemDefinition HeldItemDefinition =>
             heldItem != null ? heldItem.ItemDefinition : null;
+
+        private void Update()
+        {
+            SetVisibility(!controlGate.IsLocked);
+        }
 
         public bool HasItem(ItemDefinition item)
         {
@@ -51,6 +56,11 @@ namespace Project.Scripts.Player
             heldItem = null;
             item.Consume();
             return item;
+        }
+
+        private void SetVisibility(bool visible)
+        {
+            holdPoint.gameObject.SetActive(visible);
         }
     }
 }

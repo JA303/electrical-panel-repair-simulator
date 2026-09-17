@@ -26,9 +26,10 @@ namespace Project.Scripts.Core.Mission
                 yield break;
 
             object controlToken = null;
-
-            if (interactor.ControlGate)
+            
+            if (task.LockPlayer && interactor.ControlGate)
                 controlToken = interactor.ControlGate.Acquire();
+
 
             bool success = false;
 
@@ -41,8 +42,8 @@ namespace Project.Scripts.Core.Mission
                 mission.TryComplete(task);
             else
                 mission.Cancel(task);
-
-            interactor.ControlGate?.Release(controlToken);
+            if (task.LockPlayer)
+                interactor.ControlGate?.Release(controlToken);
         }
 
         protected abstract IEnumerator ExecuteAction(

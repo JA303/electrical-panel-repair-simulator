@@ -6,7 +6,7 @@ namespace Project.Scripts.Player
 {
     public class PlayerInteractor : MonoBehaviour
     {
-        [SerializeField] private Camera playerCamera;
+        [SerializeField] private Transform playerCameraTransform;
         [SerializeField] private float interactionDistance = 3f;
         [SerializeField] private LayerMask interactionMask;
 
@@ -25,6 +25,7 @@ namespace Project.Scripts.Player
             if (controlGate && controlGate.IsLocked)
             {
                 ClearCurrentTarget();
+                TryEndUse();
                 return;
             }
 
@@ -35,13 +36,19 @@ namespace Project.Scripts.Player
             
             if (playerInput.DropInput.WasPressedThisFrame())
                 TryDrop();
+
+            if (playerInput.UseInput.WasPressedThisFrame())
+                TryBeginUse();
+            
+            if(playerInput.UseInput.WasReleasedThisFrame())
+                TryEndUse();
         }
 
         private void RefreshTarget()
         {
             Ray ray = new Ray(
-                playerCamera.transform.position,
-                playerCamera.transform.forward);
+                playerCameraTransform.position,
+                playerCameraTransform.forward);
 
 #if UNITY_EDITOR
             Debug.DrawRay(ray.origin, ray.direction * interactionDistance);
@@ -80,6 +87,18 @@ namespace Project.Scripts.Player
         {
             if (hands && !hands.IsEmpty)
                 hands.Drop();
+        }
+
+        private void TryBeginUse()
+        {
+            if(hands && !hands.IsEmpty)
+                hands.HeldItem.BeginUse();
+        }
+        
+        private void TryEndUse()
+        {
+            if(hands && !hands.IsEmpty)
+                hands.HeldItem.EndUse();
         }
 
         private void ClearCurrentTarget()

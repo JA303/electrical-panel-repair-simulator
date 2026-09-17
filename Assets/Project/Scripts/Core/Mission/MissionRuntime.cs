@@ -11,8 +11,11 @@ namespace Project.Scripts.Core.Mission
 
     private readonly Dictionary<TaskDefinition, TaskStatus> taskStates = new();
     private readonly Dictionary<TaskDefinition, PhaseDefinition> taskPhases = new();
+    private readonly HashSet<TaskDefinition> taskPrerequisitesCompletedCache = new();
 
     private int activePhaseIndex;
+    
+    public bool IsMissionCompleted { get; private set; }
 
     public PhaseDefinition ActivePhase
     {
@@ -28,8 +31,6 @@ namespace Project.Scripts.Core.Mission
             return missionDefinition.Phases[activePhaseIndex];
         }
     }
-
-    public bool IsMissionCompleted { get; private set; }
 
     private void Awake()
     {
@@ -67,12 +68,12 @@ namespace Project.Scripts.Core.Mission
 
         foreach (PhaseDefinition phase in missionDefinition.Phases)
         {
-            if (phase == null || phase.Tasks == null)
+            if (!phase || phase.Tasks == null)
                 continue;
 
             foreach (TaskDefinition task in phase.Tasks)
             {
-                if (task == null)
+                if (!task)
                     continue;
 
                 if (taskStates.ContainsKey(task))
@@ -89,12 +90,7 @@ namespace Project.Scripts.Core.Mission
 
     public TaskStatus GetStatus(TaskDefinition task)
     {
-        if (task == null)
-            return TaskStatus.Pending;
-
-        return taskStates.TryGetValue(task, out TaskStatus status)
-            ? status
-            : TaskStatus.Pending;
+        return !task ? TaskStatus.Pending : taskStates.GetValueOrDefault(task, TaskStatus.Pending);
     }
 
     public bool IsCompleted(TaskDefinition task)
@@ -109,7 +105,7 @@ namespace Project.Scripts.Core.Mission
 
     public bool IsActivePhase(TaskDefinition task)
     {
-        if (task == null || ActivePhase == null)
+        if (!task || !ActivePhase)
             return false;
 
         return taskPhases.TryGetValue(task, out PhaseDefinition phase)
@@ -118,24 +114,28 @@ namespace Project.Scripts.Core.Mission
 
     public bool ArePrerequisitesCompleted(TaskDefinition task)
     {
-        if (task == null)
+        if (!task)
             return false;
+
+        if (taskPrerequisitesCompletedCache.Contains(task))
+            return true;
 
         foreach (TaskDefinition prerequisite in task.Prerequisites)
         {
-            if (prerequisite == null)
+            if (!prerequisite)
                 continue;
 
             if (!IsCompleted(prerequisite))
                 return false;
         }
 
+        taskPrerequisitesCompletedCache.Add(task);
         return true;
     }
 
     public bool CanStart(TaskDefinition task)
     {
-        if (task == null || IsMissionCompleted)
+        if (!task || IsMissionCompleted)
             return false;
 
         if (!IsActivePhase(task))
@@ -156,29 +156,49 @@ namespace Project.Scripts.Core.Mission
         MissionEvents.RaiseTaskStatusChanged(task, TaskStatus.Running);
         return true;
     }
-
+    
     public bool TryComplete(TaskDefinition task)
     {
-        if (task == null)
+        if (!task)
             return false;
 
         if (GetStatus(task) != TaskStatus.Running)
-        {
-            Debug.LogWarning(
-                $"Task cannot complete because it is not running: {task.name}");
             return false;
-        }
 
         taskStates[task] = TaskStatus.Completed;
-        MissionEvents.RaiseTaskStatusChanged(task, TaskStatus.Completed);
 
-        TryAdvancePhase();
+        MissionEvents.RaiseTaskStatusChanged(
+            task,
+            TaskStatus.Completed);
+
+        if (IsCurrentPhaseCompleted())
+            AdvancePhase();
+        else
+            TryStartAutomaticTasks();
+
+        return true;
+    }
+    
+    private bool IsCurrentPhaseCompleted()
+    {
+        if (!ActivePhase)
+            return false;
+
+        foreach (TaskDefinition task in ActivePhase.Tasks)
+        {
+            if (!task)
+                continue;
+
+            if (GetStatus(task) != TaskStatus.Completed)
+                return false;
+        }
+
         return true;
     }
 
     public void Cancel(TaskDefinition task)
     {
-        if (task == null)
+        if (!task)
             return;
 
         if (GetStatus(task) != TaskStatus.Running)
@@ -188,20 +208,8 @@ namespace Project.Scripts.Core.Mission
         MissionEvents.RaiseTaskStatusChanged(task, TaskStatus.Pending);
     }
 
-    private void TryAdvancePhase()
+    private void AdvancePhase()
     {
-        if (ActivePhase == null)
-            return;
-
-        foreach (TaskDefinition task in ActivePhase.Tasks)
-        {
-            if (task == null)
-                continue;
-
-            if (GetStatus(task) != TaskStatus.Completed)
-                return;
-        }
-
         activePhaseIndex++;
 
         if (activePhaseIndex >= missionDefinition.Phases.Length)
@@ -212,35 +220,36 @@ namespace Project.Scripts.Core.Mission
         }
 
         MissionEvents.RaisePhaseChanged(ActivePhase);
+
         TryStartAutomaticTasks();
     }
 
     private void TryStartAutomaticTasks()
     {
-        if (ActivePhase == null)
+        if (!ActivePhase)
             return;
 
         foreach (TaskDefinition task in ActivePhase.Tasks)
         {
-            if (task == null)
+            if (!task)
                 continue;
 
             if (task.Type != TaskType.Automatic)
                 continue;
 
             if (CanStart(task))
-                MissionEvents.RaiseTaskStatusChanged(task, TaskStatus.Pending);
+                MissionEvents.RaiseAutomaticTaskAvailable(task);
         }
     }
 
     public IEnumerable<TaskDefinition> GetActivePhaseTasks()
     {
-        if (ActivePhase == null)
+        if (!ActivePhase)
             yield break;
 
         foreach (TaskDefinition task in ActivePhase.Tasks)
         {
-            if (task != null)
+            if (task)
                 yield return task;
         }
     }

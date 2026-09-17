@@ -21,7 +21,7 @@ namespace Project.Scripts.Player
         {
             InitializeInputActions();
             // Cursor.lockState = CursorLockMode.Locked;
-            // Cursor.visible = false;
+            Cursor.visible = false;
         }
 
         private void InitializeInputActions()

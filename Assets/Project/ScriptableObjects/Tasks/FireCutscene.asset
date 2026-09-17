@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cade952430474a6494dbff119ea671c3, type: 3}
+  m_Name: FireCutscene
+  m_EditorClassIdentifier: NewAssembly::Project.Scripts.Core.Mission.TaskDefinition
+  id: fire_cutscene
+  title: Fire Cutscene
+  type: 2
+  requiredHand: 0
+  lockPlayer: 1
+  requiredItem: {fileID: 0}
+  prerequisites:
+  - {fileID: 11400000, guid: f33d0c917217d1742be9defec65d70f1, type: 2}
+  showInTaskList: 0
